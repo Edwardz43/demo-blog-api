@@ -8,3 +8,11 @@ export class User {
   email: string;
   name: string;
 }
+
+export class FindUserByIdRequest {
+  id: number;
+}
+
+export class FindUserByEmailRequest {
+  email: string;
+}

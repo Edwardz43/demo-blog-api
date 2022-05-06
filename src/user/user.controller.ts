@@ -1,6 +1,11 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { CreateUserRequest, User } from './interfaces/interface';
+import {
+  CreateUserRequest,
+  FindUserByEmailRequest,
+  FindUserByIdRequest,
+  User,
+} from './interfaces/interface';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -12,5 +17,13 @@ export class UserController {
   @GrpcMethod('UserService')
   async create(data: CreateUserRequest): Promise<User> {
     return this.service.create(data);
+  }
+  @GrpcMethod('UserService')
+  async findById(data: FindUserByIdRequest): Promise<User> {
+    return this.service.findById(data);
+  }
+  @GrpcMethod('UserService')
+  async findByEmail(data: FindUserByEmailRequest): Promise<User> {
+    return this.service.findByEmail(data);
   }
 }
