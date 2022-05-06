@@ -8,31 +8,16 @@ import {
 } from './interfaces/interface';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
-import { createCipheriv, randomBytes, scrypt } from 'crypto';
-import * as bcrypt from 'bcrypt';
-import { promisify } from 'util';
-
-const iv = randomBytes(16);
-const saltOrRounds = 10;
-
-async function encryptPassword(data: CreateUserRequest) {
-  const key = (await promisify(scrypt)(data.password, 'salt', 32)) as Buffer;
-  const cipher = createCipheriv('aes-256-ctr', key, iv);
-
-  const textToEncrypt = 'Nest';
-  const encryptedText = Buffer.concat([
-    cipher.update(textToEncrypt),
-    cipher.final(),
-  ]);
-  const hash = await bcrypt.hash(encryptedText.toString('hex'), saltOrRounds);
-  return hash;
-}
+import { UtilService } from '../util/util.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly util: UtilService,
+  ) {}
   async create(data: CreateUserRequest): Promise<User | null> {
-    const hash = await encryptPassword(data);
+    const hash = await this.util.encryptPassword(data.password);
     data.password = hash;
     const user = await this.prisma.user
       .create({
