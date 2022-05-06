@@ -13,8 +13,8 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   private service: UserService;
-  constructor(userLogicService: UserService) {
-    this.service = userLogicService;
+  constructor(service: UserService) {
+    this.service = service;
   }
   @GrpcMethod('UserService')
   async create(data: CreateUserRequest): Promise<User> {
