@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import {
   CreateUserRequest,
   FindUserByEmailRequest,
   FindUserByIdRequest,
-  User,
-} from './interfaces/interface';
-import { PrismaService } from '../prisma.service';
+  UpdateUserResponse,
+  User
+} from "./interfaces/interface";
+import { PrismaService } from "../prisma.service";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class UserService {
@@ -40,5 +42,19 @@ export class UserService {
       })
       .then((user) => user);
     return res;
+  }
+  async update(params: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }): Promise<UpdateUserResponse> {
+    const { data, where } = params;
+    const message = await this.prisma.user
+      .update({
+        data,
+        where,
+      })
+      .then((user) => (user ? 'ok' : 'fail'))
+      .catch((error: Error) => error.message);
+    return { message };
   }
 }

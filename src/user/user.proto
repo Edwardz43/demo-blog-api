@@ -6,6 +6,7 @@ service UserService {
   rpc Create (CreateUserRequest) returns (User);
   rpc FindById (UserById) returns (User);
   rpc FindByEmail (UserByEmail) returns (User);
+  rpc Update (User) returns (UpdateUserResponse);
 }
 
 message User {
@@ -25,4 +26,8 @@ message UserById {
 
 message UserByEmail {
   string email = 1;
+}
+
+message UpdateUserResponse {
+  string message = 1;
 }

@@ -16,3 +16,13 @@ export class FindUserByIdRequest {
 export class FindUserByEmailRequest {
   email: string;
 }
+
+export class UpdateUserResponse {
+  message: string;
+}
+
+export class UpdateUserRequest {
+  id: number;
+  email?: string;
+  name?: string;
+}

@@ -4,6 +4,8 @@ import {
   CreateUserRequest,
   FindUserByEmailRequest,
   FindUserByIdRequest,
+  UpdateUserRequest,
+  UpdateUserResponse,
   User,
 } from './interfaces/interface';
 import { UserService } from './user.service';
@@ -25,5 +27,13 @@ export class UserController {
   @GrpcMethod('UserService')
   async findByEmail(data: FindUserByEmailRequest): Promise<User> {
     return this.service.findByEmail(data);
+  }
+
+  @GrpcMethod('UserService')
+  async update(data: UpdateUserRequest): Promise<UpdateUserResponse> {
+    return this.service.update({
+      where: { id: data.id },
+      data: data,
+    });
   }
 }
