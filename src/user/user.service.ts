@@ -39,9 +39,18 @@ export class UserService {
     return res;
   }
 
-  async findByEmail(data: FindUserByEmailRequest): Promise<User | null> {
+  async findByEmail(
+    data: FindUserByEmailRequest,
+    includePassword = false,
+  ): Promise<User | null> {
     const res = await this.prisma.user
       .findFirst({
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          password: includePassword,
+        },
         where: {
           email: data.email,
         },
