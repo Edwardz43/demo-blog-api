@@ -4,10 +4,11 @@ import { join } from 'path';
 export const grpcClientOptions: ClientOptions = {
   transport: Transport.GRPC,
   options: {
-    package: ['user', 'auth'],
+    package: ['user', 'auth', 'post'],
     protoPath: [
       join(__dirname, './user/user.proto'),
       join(__dirname, './auth/auth.proto'),
+      join(__dirname, './post/post.proto'),
     ],
     url: 'localhost:5051',
   },

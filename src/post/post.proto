@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package post;
+
+service PostService {
+  rpc Create(CreatePostRequest) returns (CreatePostResponse) {}
+}
+
+message CreatePostRequest {
+  string title = 1;
+  string content = 2;
+  int32 authorId = 3;
+  bool isPublished = 4;
+}
+
+message CreatePostResponse {
+  int32 id = 1;
+  string message = 2;
+}
