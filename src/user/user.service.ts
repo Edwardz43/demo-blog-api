@@ -9,11 +9,14 @@ import {
 } from './interfaces/interface';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
-import * as jwt from 'jsonwebtoken';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly authService: AuthService,
+  ) {}
 
   async findById(data: FindUserByIdRequest): Promise<User | null> {
     const res = await this.prisma.user
@@ -61,7 +64,7 @@ export class UserService {
   }
 
   async delete(@Body() data: DeleteUserRequest): Promise<DeleteUserResponse> {
-    const { email, isValid } = await this.validateToken(data);
+    const { email, isValid } = await this.authService.validateToken(data);
     if (isValid) {
       return { message: 'invalid input info' };
     }
@@ -84,18 +87,5 @@ export class UserService {
       .then((_) => 'ok')
       .catch((error) => error.message);
     return { message };
-  }
-
-  /**
-   * @description user token validation
-   * @param data
-   * @returns token
-   * @memberof UserService
-   */
-  private async validateToken(data: DeleteUserRequest) {
-    const userData = jwt.verify(data.token, 'secretKey');
-    const email = userData['email'];
-    const isValid = data.email !== email;
-    return { email, isValid };
   }
 }

@@ -8,6 +8,8 @@ import {
 } from './interfaces/interface';
 import { UtilService } from '../util/util.service';
 import { PrismaService } from '../prisma.service';
+import { DeleteUserRequest } from '../user/interfaces/interface';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -49,5 +51,17 @@ export class AuthService {
     return {
       token,
     };
+  }
+
+  /**
+   * @description user token validation
+   */
+  async validateToken(data: DeleteUserRequest) {
+    const userData = this.jwtService.verify(data.token, {
+      secret: 'secretKey',
+    });
+    const email = userData['email'];
+    const isValid = data.email !== email;
+    return { email, isValid };
   }
 }
