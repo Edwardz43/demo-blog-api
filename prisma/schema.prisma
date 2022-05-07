@@ -25,8 +25,7 @@ model Post {
   content   String?     @db.Text
   published Boolean?    @default(false)
   author    User?       @relation(fields: [authorId], references: [id])
-  authorId  Int?
-  createdAt DateTime
-  updatedAt DateTime
-  deletedAt DateTime?
+  authorId  Int?        @map("author_id")
+  createdAt DateTime    @default(now()) @map(name: "created_at")
+  updatedAt DateTime    @default(now()) @map(name: "updated_at")
 }
