@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginRequest, LoginResponse } from './interfaces/interface';
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from './interfaces/interface';
 import { UserService } from '../user/user.service';
 import { UtilService } from '../util/util.service';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +16,20 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly userService: UserService,
     private readonly UtilService: UtilService,
+    private readonly prisma: PrismaService,
   ) {}
+
+  async register(data: RegisterRequest): Promise<RegisterResponse | null> {
+    const hash = await this.UtilService.encryptPassword(data.password);
+    data.password = hash;
+    const user = await this.prisma.user
+      .create({
+        data,
+      })
+      .then((user) => user)
+      .catch((_) => null);
+    return user;
+  }
   async login(data: LoginRequest): Promise<LoginResponse> {
     const user = await this.userService.findByEmail(
       { email: data.email },

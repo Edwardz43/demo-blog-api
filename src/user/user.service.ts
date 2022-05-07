@@ -1,35 +1,19 @@
 import { Body, Injectable } from '@nestjs/common';
 import {
-  CreateUserRequest, DeleteUserRequest, DeleteUserResponse,
+  DeleteUserRequest,
+  DeleteUserResponse,
   FindUserByEmailRequest,
   FindUserByIdRequest,
   UpdateUserResponse,
-  User
-} from "./interfaces/interface";
+  User,
+} from './interfaces/interface';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
-import { UtilService } from '../util/util.service';
 import * as jwt from 'jsonwebtoken';
-import {
-} from '../auth/interfaces/interface';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly util: UtilService,
-  ) {}
-  async create(data: CreateUserRequest): Promise<User | null> {
-    const hash = await this.util.encryptPassword(data.password);
-    data.password = hash;
-    const user = await this.prisma.user
-      .create({
-        data,
-      })
-      .then((user) => user)
-      .catch((_) => null);
-    return user;
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async findById(data: FindUserByIdRequest): Promise<User | null> {
     const res = await this.prisma.user
@@ -77,9 +61,8 @@ export class UserService {
   }
 
   async delete(@Body() data: DeleteUserRequest): Promise<DeleteUserResponse> {
-    const userData = jwt.verify(data.token, 'secretKey');
-    const email = userData['email'];
-    if (data.email !== email) {
+    const { email, isValid } = await this.validateToken(data);
+    if (isValid) {
       return { message: 'invalid input info' };
     }
     const user = await this.prisma.user
@@ -101,5 +84,18 @@ export class UserService {
       .then((_) => 'ok')
       .catch((error) => error.message);
     return { message };
+  }
+
+  /**
+   * @description user token validation
+   * @param data
+   * @returns token
+   * @memberof UserService
+   */
+  private async validateToken(data: DeleteUserRequest) {
+    const userData = jwt.verify(data.token, 'secretKey');
+    const email = userData['email'];
+    const isValid = data.email !== email;
+    return { email, isValid };
   }
 }
