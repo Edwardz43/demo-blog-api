@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import {
-  CreateUserRequest,
+  CreateUserRequest, DeleteUserRequest, DeleteUserResponse,
   FindUserByEmailRequest,
   FindUserByIdRequest,
   UpdateUserResponse,
-  User,
-} from './interfaces/interface';
+  User
+} from "./interfaces/interface";
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
 import { UtilService } from '../util/util.service';
+import * as jwt from 'jsonwebtoken';
+import {
+} from '../auth/interfaces/interface';
 
 @Injectable()
 export class UserService {
@@ -70,6 +73,33 @@ export class UserService {
       })
       .then((user) => (user ? 'ok' : 'fail'))
       .catch((error: Error) => error.message);
+    return { message };
+  }
+
+  async delete(@Body() data: DeleteUserRequest): Promise<DeleteUserResponse> {
+    const userData = jwt.verify(data.token, 'secretKey');
+    const email = userData['email'];
+    if (data.email !== email) {
+      return { message: 'invalid input info' };
+    }
+    const user = await this.prisma.user
+      .findFirst({
+        where: {
+          email,
+        },
+      })
+      .then((user) => user);
+    if (!user) {
+      return { message: 'user not found' };
+    }
+    const message = await this.prisma.user
+      .delete({
+        where: {
+          email,
+        },
+      })
+      .then((_) => 'ok')
+      .catch((error) => error.message);
     return { message };
   }
 }

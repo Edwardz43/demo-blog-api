@@ -28,3 +28,13 @@ export class UpdateUserRequest {
   email?: string;
   name?: string;
 }
+
+export class DeleteUserRequest {
+  email: string;
+  id: number;
+  token: string;
+}
+
+export class DeleteUserResponse {
+  message: string;
+}

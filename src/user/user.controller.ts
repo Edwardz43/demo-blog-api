@@ -2,6 +2,8 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import {
   CreateUserRequest,
+  DeleteUserRequest,
+  DeleteUserResponse,
   FindUserByEmailRequest,
   FindUserByIdRequest,
   UpdateUserRequest,
@@ -9,6 +11,7 @@ import {
   User,
 } from './interfaces/interface';
 import { UserService } from './user.service';
+import {} from '../auth/interfaces/interface';
 
 @Controller('user')
 export class UserController {
@@ -35,5 +38,10 @@ export class UserController {
       where: { id: data.id },
       data: data,
     });
+  }
+
+  @GrpcMethod('UserService')
+  async delete(data: DeleteUserRequest): Promise<DeleteUserResponse> {
+    return this.service.delete(data);
   }
 }

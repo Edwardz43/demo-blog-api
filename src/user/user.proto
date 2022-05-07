@@ -7,6 +7,7 @@ service UserService {
   rpc FindById (UserById) returns (User);
   rpc FindByEmail (UserByEmail) returns (User);
   rpc Update (User) returns (UpdateUserResponse);
+  rpc Delete (DeleteUserRequest) returns (DeleteUserResponse);
 }
 
 message User {
@@ -30,5 +31,15 @@ message UserByEmail {
 }
 
 message UpdateUserResponse {
+  string message = 1;
+}
+
+message DeleteUserRequest {
+  int32 id = 1;
+  string email = 2;
+  string token = 3;
+}
+
+message DeleteUserResponse {
   string message = 1;
 }
