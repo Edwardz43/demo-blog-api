@@ -6,7 +6,6 @@ import {
   RegisterRequest,
   RegisterResponse,
 } from './interfaces/interface';
-import { UserService } from '../user/user.service';
 import { UtilService } from '../util/util.service';
 import { PrismaService } from '../prisma.service';
 
@@ -14,7 +13,6 @@ import { PrismaService } from '../prisma.service';
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private readonly userService: UserService,
     private readonly UtilService: UtilService,
     private readonly prisma: PrismaService,
   ) {}
@@ -31,10 +29,11 @@ export class AuthService {
     return user;
   }
   async login(data: LoginRequest): Promise<LoginResponse> {
-    const user = await this.userService.findByEmail(
-      { email: data.email },
-      true,
-    );
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: data.email,
+      },
+    });
     if (!user) {
       return null;
     }
