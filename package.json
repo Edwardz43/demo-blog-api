@@ -27,7 +27,7 @@
     "@nestjs/microservices": "^8.4.4",
     "@nestjs/platform-express": "^8.0.0",
     "@prisma/client": "^3.13.0",
-    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "prisma": "^3.13.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
