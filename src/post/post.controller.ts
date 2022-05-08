@@ -1,12 +1,12 @@
-import { Controller } from "@nestjs/common";
-import { GrpcMethod } from "@nestjs/microservices";
-import { PostService } from "./post.service";
+import { Controller } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
+import { PostService } from './post.service';
 import {
   CreatePostRequest,
   CreatePostResponse,
   FindPostByAuthorRequest,
-  FindPostByAuthorResponse
-} from "./interfaces/interface";
+  FindPostByAuthorResponse,
+} from './interfaces/interface';
 
 @Controller('post')
 export class PostController {
