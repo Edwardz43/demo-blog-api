@@ -5,6 +5,7 @@ package post;
 service PostService {
   rpc Create(CreatePostRequest) returns (CreatePostResponse) {}
   rpc FindByAuthor(FindByAuthorRequest) returns (FindByAuthorResponse) {}
+  rpc FindById(FindByIdRequest) returns (Post) {}
   rpc Update(UpdatePostRequest) returns (UpdatePostResponse) {}
 }
 
@@ -47,4 +48,8 @@ message UpdatePostRequest {
 
 message UpdatePostResponse {
   string message = 2;
+}
+
+message FindByIdRequest {
+  int32 id = 1;
 }

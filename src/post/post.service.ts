@@ -5,6 +5,7 @@ import {
   CreatePostResponse,
   FindPostByAuthorRequest,
   FindPostByAuthorResponse,
+  Post,
   UpdatePostRequest,
   UpdatePostResponse,
 } from './interfaces/interface';
@@ -48,8 +49,11 @@ export class PostService {
   async findByAuthor(
     data: FindPostByAuthorRequest,
   ): Promise<FindPostByAuthorResponse> {
-    return await this.prisma.post
+    const result = await this.prisma.post
       .findMany({
+        include: {
+          author: true,
+        },
         where: {
           authorId: data.authorId,
         },
@@ -57,6 +61,41 @@ export class PostService {
       .then((result) => {
         return { postList: result };
       });
+    const postList = result.postList.map((post) => {
+      return {
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        published: post.published,
+        author: post.author.name,
+        authorId: post.author.id,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+      };
+    });
+    return { postList };
+  }
+
+  /**
+   * Get post by id
+   */
+  async findById(id: number): Promise<Post> {
+    const post = await this.prisma.post.findFirst({
+      include: {
+        author: true,
+      },
+      where: { id },
+    });
+    return {
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      published: post.published,
+      author: post.author.name,
+      authorId: post.authorId,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+    };
   }
 
   /**

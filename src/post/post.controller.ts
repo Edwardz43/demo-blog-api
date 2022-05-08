@@ -5,10 +5,10 @@ import {
   CreatePostRequest,
   CreatePostResponse,
   FindPostByAuthorRequest,
-  FindPostByAuthorResponse,
+  FindPostByAuthorResponse, Post,
   UpdatePostRequest,
-  UpdatePostResponse,
-} from './interfaces/interface';
+  UpdatePostResponse
+} from "./interfaces/interface";
 
 @Controller('post')
 export class PostController {
@@ -23,6 +23,11 @@ export class PostController {
     data: FindPostByAuthorRequest,
   ): Promise<FindPostByAuthorResponse> {
     return await this.postService.findByAuthor(data);
+  }
+
+  @GrpcMethod('PostService')
+  async findById(data: { id: number }): Promise<Post> {
+    return await this.postService.findById(data.id);
   }
 
   @GrpcMethod('PostService')
