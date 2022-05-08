@@ -27,3 +27,14 @@ export class FindPostByAuthorRequest {
 export class FindPostByAuthorResponse {
   postList: Post[];
 }
+
+export interface UpdatePostRequest {
+  id: number;
+  title?: string;
+  content?: string;
+  isPublished?: boolean;
+}
+
+export interface UpdatePostResponse {
+  message: string;
+}

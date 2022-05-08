@@ -5,6 +5,8 @@ import {
   CreatePostResponse,
   FindPostByAuthorRequest,
   FindPostByAuthorResponse,
+  UpdatePostRequest,
+  UpdatePostResponse,
 } from './interfaces/interface';
 
 @Injectable()
@@ -55,5 +57,30 @@ export class PostService {
       .then((result) => {
         return { postList: result };
       });
+  }
+
+  /**
+   * Update a post
+   */
+  async update(data: UpdatePostRequest): Promise<UpdatePostResponse> {
+    const result = await this.prisma.post
+      .update({
+        data: {
+          title: data.title,
+          content: data.content,
+          published: data.isPublished,
+          updatedAt: new Date(),
+        },
+        where: {
+          id: data.id,
+        },
+      })
+      .then((res) => {
+        return res ? 'ok' : 'failed';
+      })
+      .catch((error: Error) => {
+        return error.message;
+      });
+    return { message: result };
   }
 }

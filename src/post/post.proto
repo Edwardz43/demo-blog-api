@@ -5,6 +5,7 @@ package post;
 service PostService {
   rpc Create(CreatePostRequest) returns (CreatePostResponse) {}
   rpc FindByAuthor(FindByAuthorRequest) returns (FindByAuthorResponse) {}
+  rpc Update(UpdatePostRequest) returns (UpdatePostResponse) {}
 }
 
 message Post {
@@ -35,4 +36,15 @@ message FindByAuthorRequest {
 
 message FindByAuthorResponse {
   repeated Post postList = 1;
+}
+
+message UpdatePostRequest {
+  int32 id = 1;
+  string title = 2;
+  string content = 3;
+  bool isPublished = 4;
+}
+
+message UpdatePostResponse {
+  string message = 2;
 }
