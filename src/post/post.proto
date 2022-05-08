@@ -7,6 +7,7 @@ service PostService {
   rpc FindByAuthor(FindByAuthorRequest) returns (FindByAuthorResponse) {}
   rpc FindById(FindByIdRequest) returns (Post) {}
   rpc Update(UpdatePostRequest) returns (UpdatePostResponse) {}
+  rpc Delete(DeletePostRequest) returns (DeletePostResponse) {}
 }
 
 message Post {
@@ -52,4 +53,14 @@ message UpdatePostResponse {
 
 message FindByIdRequest {
   int32 id = 1;
+}
+
+message DeletePostRequest {
+  string token = 1;
+  string email = 2;
+  int32 id = 3;
+}
+
+message DeletePostResponse {
+  string message = 1;
 }

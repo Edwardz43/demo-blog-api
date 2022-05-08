@@ -4,11 +4,14 @@ import { PostService } from './post.service';
 import {
   CreatePostRequest,
   CreatePostResponse,
+  DeletePostRequest,
+  DeletePostResponse,
   FindPostByAuthorRequest,
-  FindPostByAuthorResponse, Post,
+  FindPostByAuthorResponse,
+  Post,
   UpdatePostRequest,
-  UpdatePostResponse
-} from "./interfaces/interface";
+  UpdatePostResponse,
+} from './interfaces/interface';
 
 @Controller('post')
 export class PostController {
@@ -33,5 +36,10 @@ export class PostController {
   @GrpcMethod('PostService')
   async update(data: UpdatePostRequest): Promise<UpdatePostResponse> {
     return this.postService.update(data);
+  }
+
+  @GrpcMethod('PostService')
+  async delete(data: DeletePostRequest): Promise<DeletePostResponse> {
+    return this.postService.delete(data);
   }
 }

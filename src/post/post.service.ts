@@ -9,10 +9,14 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from './interfaces/interface';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly authService: AuthService,
+  ) {}
 
   /**
    * Create a new post
@@ -120,6 +124,32 @@ export class PostService {
       .catch((error: Error) => {
         return error.message;
       });
+    return { message: result };
+  }
+
+  /**
+   * Delete a post
+   */
+  async delete(data: {
+    email: string;
+    token: string;
+    id: number;
+  }): Promise<{ message: string }> {
+    const isValid = await this.authService.validateToken(
+      data.email,
+      data.token,
+    );
+    if (!isValid) {
+      return { message: 'invalid input info' };
+    }
+    const result = await this.prisma.post
+      .delete({
+        where: {
+          id: data.id,
+        },
+      })
+      .then((res) => (res ? 'ok' : 'failed'))
+      .catch((error: Error) => error.message);
     return { message: result };
   }
 }

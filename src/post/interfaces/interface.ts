@@ -39,3 +39,11 @@ export interface UpdatePostRequest {
 export interface UpdatePostResponse {
   message: string;
 }
+
+export type DeletePostRequest = {
+  token: string;
+  email: string;
+  id: number;
+};
+
+export type DeletePostResponse = { message: string };
