@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { CreatePostRequest, CreatePostResponse } from './interfaces/interface';
+import {
+  CreatePostRequest,
+  CreatePostResponse,
+  FindPostByAuthorRequest,
+  FindPostByAuthorResponse,
+} from './interfaces/interface';
 
 @Injectable()
 export class PostService {
@@ -32,6 +37,23 @@ export class PostService {
           id: null,
           message: 'failed',
         };
+      });
+  }
+
+  /**
+   * Get all posts by specific author
+   */
+  async findByAuthor(
+    data: FindPostByAuthorRequest,
+  ): Promise<FindPostByAuthorResponse> {
+    return await this.prisma.post
+      .findMany({
+        where: {
+          authorId: data.authorId,
+        },
+      })
+      .then((result) => {
+        return { postList: result };
       });
   }
 }
