@@ -56,12 +56,10 @@ export class AuthService {
   /**
    * @description user token validation
    */
-  async validateToken(data: DeleteUserRequest) {
-    const userData = this.jwtService.verify(data.token, {
+  async validateToken(email: string, token: string): Promise<any> {
+    const userData = this.jwtService.verify(token, {
       secret: 'secretKey',
     });
-    const email = userData['email'];
-    const isValid = data.email !== email;
-    return { email, isValid };
+    return userData['email'] === email;
   }
 }

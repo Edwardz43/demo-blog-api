@@ -64,14 +64,17 @@ export class UserService {
   }
 
   async delete(@Body() data: DeleteUserRequest): Promise<DeleteUserResponse> {
-    const { email, isValid } = await this.authService.validateToken(data);
-    if (isValid) {
+    const isValid = await this.authService.validateToken(
+      data.email,
+      data.token,
+    );
+    if (!isValid) {
       return { message: 'invalid input info' };
     }
     const user = await this.prisma.user
       .findFirst({
         where: {
-          email,
+          email: data.email,
         },
       })
       .then((user) => user);
@@ -81,7 +84,7 @@ export class UserService {
     const message = await this.prisma.user
       .delete({
         where: {
-          email,
+          email: data.email,
         },
       })
       .then((_) => 'ok')
