@@ -10,10 +10,20 @@ import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { PostModule } from './post/post.module';
+import { UploadController } from './upload/upload.controller';
+import { UploadService } from './upload/upload.service';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
-  imports: [UserModule, UtilModule, AuthModule, PostModule],
-  controllers: [AppController, AuthController],
-  providers: [AppService, UserService, PrismaService, UtilService, AuthService],
+  imports: [UserModule, UtilModule, AuthModule, PostModule, UploadModule],
+  controllers: [AppController, AuthController, UploadController],
+  providers: [
+    AppService,
+    UserService,
+    PrismaService,
+    UtilService,
+    AuthService,
+    UploadService,
+  ],
 })
 export class AppModule {}
