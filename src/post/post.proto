@@ -56,7 +56,7 @@ message FindByIdRequest {
 }
 
 message DeletePostRequest {
-  string token = 1;
+  int32 userId = 1;
   string email = 2;
   int32 id = 3;
 }

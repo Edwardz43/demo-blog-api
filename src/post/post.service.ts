@@ -9,14 +9,10 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from './interfaces/interface';
-import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class PostService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Create a new post
@@ -39,7 +35,7 @@ export class PostService {
           message: 'ok',
         };
       })
-      .catch((_) => {
+      .catch(() => {
         return {
           id: null,
           message: 'failed',
@@ -131,16 +127,22 @@ export class PostService {
    * Delete a post
    */
   async delete(data: {
+    userId: number;
     email: string;
-    token: string;
     id: number;
   }): Promise<{ message: string }> {
-    const isValid = await this.authService.validateToken(
-      data.email,
-      data.token,
-    );
-    if (!isValid) {
-      return { message: 'invalid input info' };
+    const posts = await this.prisma.user.findFirst({
+      where: {
+        id: data.userId,
+        email: data.email,
+      },
+      include: {
+        posts: true,
+      },
+    });
+    const post = posts.posts.find((p) => p.id === data.id);
+    if (!post) {
+      return { message: 'post not found' };
     }
     const result = await this.prisma.post
       .delete({

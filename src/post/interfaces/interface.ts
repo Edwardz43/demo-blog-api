@@ -41,7 +41,7 @@ export interface UpdatePostResponse {
 }
 
 export type DeletePostRequest = {
-  token: string;
+  userId: number;
   email: string;
   id: number;
 };
