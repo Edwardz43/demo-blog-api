@@ -14,6 +14,9 @@ async function main() {
       email: 'alice@prisma.io',
       password: await util.encryptPassword('password'),
       name: 'Alice',
+      profile: {
+        create: {},
+      },
       posts: {
         create: {
           title: 'Check out Prisma with Next.js',
@@ -31,6 +34,9 @@ async function main() {
       email: 'bob@prisma.io',
       name: 'Bob',
       password: await util.encryptPassword('password'),
+      profile: {
+        create: {},
+      },
       posts: {
         create: [
           {

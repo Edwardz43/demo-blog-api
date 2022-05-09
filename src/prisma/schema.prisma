@@ -13,12 +13,27 @@ datasource db {
 
 
 model User {
-  id        Int     @default(autoincrement()) @id
-  email     String  @unique
+  id        Int         @default(autoincrement()) @id
+  email     String      @unique
   name      String?
   password  String
   posts     Post[]
+  profile   Profile?
 }
+
+model Profile {
+  id        Int         @default(autoincrement()) @id
+  user      User?       @relation(fields: [userId], references: [id])
+  userId    Int?        @map("user_id")
+  avatar    String?
+  age       Int?
+  phone     String?
+  address   String?
+  birthday  DateTime?
+  createdAt DateTime    @default(now()) @map(name: "created_at")
+  updatedAt DateTime    @default(now()) @map(name: "updated_at")
+}
+
 
 model Post {
   id        Int         @default(autoincrement()) @id
