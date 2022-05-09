@@ -6,8 +6,8 @@ export class RegisterRequest {
 
 export class RegisterResponse {
   id: number;
-  email: string;
-  name: string;
+  email?: string;
+  name?: string;
 }
 
 export class LoginRequest {

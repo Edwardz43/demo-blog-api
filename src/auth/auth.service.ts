@@ -8,8 +8,6 @@ import {
 } from './interfaces/interface';
 import { UtilService } from '../util/util.service';
 import { PrismaService } from '../prisma.service';
-import { DeleteUserRequest } from '../user/interfaces/interface';
-import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -19,15 +17,27 @@ export class AuthService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async register(data: RegisterRequest): Promise<RegisterResponse | null> {
+  async register(data: RegisterRequest): Promise<RegisterResponse> {
     const hash = await this.UtilService.encryptPassword(data.password);
     data.password = hash;
     const user = await this.prisma.user
       .create({
-        data,
+        data: {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          profile: {
+            create: {},
+          },
+        },
       })
       .then((user) => user)
-      .catch((_) => null);
+      .catch((err) => {
+        console.log(err);
+        return {
+          id: -1,
+        };
+      });
     return user;
   }
   async login(data: LoginRequest): Promise<LoginResponse> {
