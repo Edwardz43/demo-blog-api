@@ -1,5 +1,5 @@
-import { PrismaService } from '../src/prisma.service';
-import { UtilService} from "../src/util/util.service";
+import { PrismaService } from '../prisma.service';
+import { UtilService} from "../util/util.service";
 
 const prisma = new PrismaService();
 const util = new UtilService();

@@ -3,7 +3,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { PrismaService } from '../prisma.service';
 import { UtilService } from '../util/util.service';
-import { AuthService } from "./auth.service";
+import { AuthService } from './auth.service';
 
 const jwtConstants = {
   secret: 'secretKey',
