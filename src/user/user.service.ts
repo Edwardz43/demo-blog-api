@@ -4,12 +4,14 @@ import {
   DeleteUserResponse,
   FindUserByEmailRequest,
   FindUserByIdRequest,
+  UpdateUserRequest,
   UpdateUserResponse,
   User,
 } from './interfaces/interface';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
 import { AuthService } from '../auth/auth.service';
+import { async } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -48,18 +50,34 @@ export class UserService {
       .then((user) => user);
     return res;
   }
-  async update(params: {
-    where: Prisma.UserWhereUniqueInput;
-    data: Prisma.UserUpdateInput;
-  }): Promise<UpdateUserResponse> {
-    const { data, where } = params;
+  async update(data: UpdateUserRequest): Promise<UpdateUserResponse> {
     const message = await this.prisma.user
       .update({
-        data,
-        where,
+        data: {
+          name: data.user.name,
+          email: data.user.email,
+          profile: {
+            update: {
+              age: data.profile.age,
+              phone: data.profile.phone,
+              address: data.profile.address,
+              birthday: new Date(data.profile.birthday),
+              updatedAt: new Date(),
+            },
+          },
+        },
+        include: {
+          profile: true,
+        },
+        where: {
+          id: data.user.id,
+        },
       })
       .then((user) => (user ? 'ok' : 'fail'))
-      .catch((error: Error) => error.message);
+      .catch((error: Error) => {
+        console.log(error.message);
+        return 'fail';
+      });
     return { message };
   }
 

@@ -28,10 +28,7 @@ export class UserController {
 
   @GrpcMethod('UserService')
   async update(data: UpdateUserRequest): Promise<UpdateUserResponse> {
-    return this.service.update({
-      where: { id: data.id },
-      data: data,
-    });
+    return this.service.update(data);
   }
 
   @GrpcMethod('UserService')

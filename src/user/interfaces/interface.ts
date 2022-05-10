@@ -5,6 +5,18 @@ export class User {
   password?: string;
 }
 
+export interface Profile {
+  id?: number;
+  userId?: number;
+  avatar?: string;
+  age?: number;
+  phone?: string;
+  address?: string;
+  birthday?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export class FindUserByIdRequest {
   id: number;
 }
@@ -18,9 +30,8 @@ export class UpdateUserResponse {
 }
 
 export class UpdateUserRequest {
-  id: number;
-  email?: string;
-  name?: string;
+  user: User;
+  profile?: Profile;
 }
 
 export class DeleteUserRequest {
