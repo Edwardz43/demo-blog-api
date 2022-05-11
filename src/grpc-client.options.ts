@@ -11,6 +11,6 @@ export const grpcClientOptions: ClientOptions = {
       join(__dirname, './post/post.proto'),
       join(__dirname, './upload/upload.proto'),
     ],
-    url: 'localhost:5051',
+    url: '0.0.0.0:50001',
   },
 };
