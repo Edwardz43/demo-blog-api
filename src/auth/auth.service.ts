@@ -8,19 +8,20 @@ import {
 } from './interfaces/interface';
 import { UtilService } from '../util/util.service';
 import { PrismaService } from '../prisma.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private readonly UtilService: UtilService,
+    private readonly utilService: UtilService,
     private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
   ) {}
 
   async register(data: RegisterRequest): Promise<RegisterResponse> {
-    const hash = await this.UtilService.encryptPassword(data.password);
-    data.password = hash;
-    const user = await this.prisma.user
+    data.password = await this.utilService.encryptPassword(data.password);
+    return await this.prisma.user
       .create({
         data: {
           email: data.email,
@@ -38,7 +39,6 @@ export class AuthService {
           id: -1,
         };
       });
-    return user;
   }
   async login(data: LoginRequest): Promise<LoginResponse> {
     const user = await this.prisma.user.findFirst({
@@ -49,7 +49,7 @@ export class AuthService {
     if (!user) {
       return null;
     }
-    const ok = await this.UtilService.comparePassword(
+    const ok = await this.utilService.comparePassword(
       data.password,
       user.password,
     );
@@ -64,11 +64,11 @@ export class AuthService {
   }
 
   /**
-   * @description user token validation
+   * user token validation
    */
   async validateToken(email: string, token: string): Promise<any> {
     const userData = this.jwtService.verify(token, {
-      secret: 'secretKey',
+      secret: this.config.get('JWT_SECRET'),
     });
     return userData['email'] === email;
   }

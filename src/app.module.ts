@@ -13,9 +13,20 @@ import { PostModule } from './post/post.module';
 import { UploadController } from './upload/upload.controller';
 import { UploadService } from './upload/upload.service';
 import { UploadModule } from './upload/upload.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UserModule, UtilModule, AuthModule, PostModule, UploadModule],
+  imports: [
+    UserModule,
+    UtilModule,
+    AuthModule,
+    PostModule,
+    UploadModule,
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController, AuthController, UploadController],
   providers: [
     AppService,

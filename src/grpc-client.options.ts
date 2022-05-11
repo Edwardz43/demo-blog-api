@@ -1,5 +1,8 @@
 import { ClientOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
+import { ConfigService } from '@nestjs/config';
+
+const config = new ConfigService();
 
 export const grpcClientOptions: ClientOptions = {
   transport: Transport.GRPC,
@@ -11,6 +14,6 @@ export const grpcClientOptions: ClientOptions = {
       join(__dirname, './post/post.proto'),
       join(__dirname, './upload/upload.proto'),
     ],
-    url: '0.0.0.0:50001',
+    url: config.get<string>('MICROSERVICE_URL', '0.0.0.0:50001'),
   },
 };
