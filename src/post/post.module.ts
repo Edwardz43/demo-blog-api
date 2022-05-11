@@ -5,12 +5,15 @@ import { PostService } from './post.service';
 import { AuthService } from '../auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UtilService } from '../util/util.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'secretKey',
-      signOptions: { expiresIn: '5m' },
+      secret: new ConfigService().get('JWT_SECRET'),
+      signOptions: {
+        expiresIn: new ConfigService().get('JWT_EXPIRED_DURATION'),
+      },
     }),
   ],
   providers: [PostService, PrismaService, UtilService, AuthService],

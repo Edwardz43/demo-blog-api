@@ -3,12 +3,14 @@ import { GrpcMethod } from '@nestjs/microservices';
 import * as path from 'path';
 import * as fs from 'fs';
 import { PrismaService } from '../prisma.service';
-
-const urlPrefix = 'http://localhost:3000/upload/';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UploadService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
+  ) {}
   @GrpcMethod('UploadService')
   async upload(userId: number, file: any) {
     const buf = Buffer.from(file);
@@ -29,7 +31,7 @@ export class UploadService {
     if (!ok) {
       return 'fail';
     }
-    const url = urlPrefix + fileName;
+    const url = this.config.get<string>('UPLOAD_HOST_PREFIX') + fileName;
     return { url };
   }
 
