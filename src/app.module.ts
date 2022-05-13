@@ -14,6 +14,9 @@ import { UploadController } from './upload/upload.controller';
 import { UploadService } from './upload/upload.service';
 import { UploadModule } from './upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
+import { join } from 'path';
+import { WinstonModule } from 'nest-winston';
+import { format, transports } from 'winston';
 
 @Module({
   imports: [
@@ -25,6 +28,17 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    WinstonModule.forRoot({
+      format: format.combine(format.timestamp(), format.json()),
+      transports: ['debug', 'info', 'warn', 'error'].map(
+        (level) =>
+          new transports.File({
+            dirname: join(__dirname, `./../log/${level}/`),
+            filename: `${level}.log`,
+            level,
+          }),
+      ),
     }),
   ],
   controllers: [AppController, AuthController, UploadController],

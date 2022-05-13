@@ -16,5 +16,5 @@ export class LoginRequest {
 }
 
 export class LoginResponse {
-  token: string;
+  token?: string;
 }

@@ -3,11 +3,12 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
-
-const configService = new ConfigService();
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const config = app.get(ConfigService);
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
@@ -18,12 +19,12 @@ async function bootstrap() {
         join(__dirname, './post/post.proto'),
         join(__dirname, './upload/upload.proto'),
       ],
-      url: configService.get<string>('MICROSERVICE_URL'),
+      url: config.get<string>('MICROSERVICE_URL'),
     },
   });
 
   await app.startAllMicroservices();
-  await app.listen(configService.get<number>('port', 3000));
+  await app.listen(config.get<number>('port', 3000));
 }
 
 bootstrap();

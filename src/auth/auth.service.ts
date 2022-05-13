@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   LoginRequest,
@@ -9,6 +9,7 @@ import {
 import { UtilService } from '../util/util.service';
 import { PrismaService } from '../prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,8 @@ export class AuthService {
     private readonly utilService: UtilService,
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
   ) {}
 
   async register(data: RegisterRequest): Promise<RegisterResponse> {
@@ -33,8 +36,14 @@ export class AuthService {
         },
       })
       .then((user) => user)
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log(err);
+        this.logger.error({
+          service: 'auth',
+          action: 'register',
+          error: err.message,
+          stack: err.stack,
+        });
         return {
           id: -1,
         };
@@ -47,14 +56,30 @@ export class AuthService {
       },
     });
     if (!user) {
-      return null;
+      this.logger.log({
+        service: 'auth',
+        action: 'login',
+        message: 'user not found',
+        user: data.email,
+      });
+      return {
+        token: null,
+      };
     }
     const ok = await this.utilService.comparePassword(
       data.password,
       user.password,
     );
     if (!ok) {
-      return null;
+      this.logger.log({
+        service: 'auth',
+        action: 'login',
+        message: 'password not match',
+        user: data.email,
+      });
+      return {
+        token: null,
+      };
     }
     const payload = { email: data.email, id: user.id, name: user.name };
     const token = this.jwtService.sign(payload);
