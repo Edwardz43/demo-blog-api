@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import {
   CreatePostRequest,
@@ -9,10 +9,15 @@ import {
   UpdatePostRequest,
   UpdatePostResponse,
 } from './interfaces/interface';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: LoggerService,
+  ) {}
 
   /**
    * Create a new post
@@ -35,7 +40,13 @@ export class PostService {
           message: 'ok',
         };
       })
-      .catch(() => {
+      .catch((err: Error) => {
+        this.logger.error({
+          service: 'post',
+          action: 'create',
+          error: err.message,
+          stack: err.stack,
+        });
         return {
           id: null,
           message: 'failed',
@@ -115,10 +126,25 @@ export class PostService {
         },
       })
       .then((res) => {
+        if (!res) {
+          this.logger.log({
+            service: 'post',
+            action: 'update',
+            message: 'failed',
+            data,
+          });
+        }
         return res ? 'ok' : 'failed';
       })
       .catch((error: Error) => {
-        return error.message;
+        this.logger.error({
+          service: 'post',
+          action: 'update',
+          error: error.message,
+          stack: error.stack,
+          data,
+        });
+        return 'error while updating';
       });
     return { message: result };
   }
@@ -150,8 +176,27 @@ export class PostService {
           id: data.id,
         },
       })
-      .then((res) => (res ? 'ok' : 'failed'))
-      .catch((error: Error) => error.message);
+      .then((res) => {
+        if (!res) {
+          this.logger.log({
+            service: 'post',
+            action: 'delete',
+            message: 'failed',
+            data,
+          });
+        }
+        return res ? 'ok' : 'failed';
+      })
+      .catch((error: Error) => {
+        this.logger.error({
+          service: 'post',
+          action: 'delete',
+          error: error.message,
+          stack: error.stack,
+          data,
+        });
+        return 'error while deleting';
+      });
     return { message: result };
   }
 }
